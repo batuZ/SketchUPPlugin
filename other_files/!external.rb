@@ -4,7 +4,7 @@ SKETCHUP_CONSOLE.show
 paths = [ '/Users/Batu/MyData/su_sdk/plugin' ]
 paths.each { |path|
   $LOAD_PATH << path
-  Dir.glob("#{path}/*.{rb,rbs,rbe}") { |file|
+  Dir.glob("#{path}/*.{rb,rbz,rbs,rbe}") { |file|
     Sketchup.require(file)
   }
 }

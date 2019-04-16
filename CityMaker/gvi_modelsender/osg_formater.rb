@@ -31,7 +31,7 @@ class StateSet
 	end
 end
 
-clss Geometry
+class Geometry
 	def initialize
 		# @DataVariance 	= 'STATIC'
 		# @StateSet 			= {}
@@ -124,10 +124,10 @@ class Root
 end
 
 # -----------------------------------------------
-r = MatrixTransform.new
+# r = MatrixTransform.new
 
-puts r.instance_variables
-puts r.to_osg
+# puts r.instance_variables
+# puts r.to_osg
 # g = Group.new
 # puts g.to_osg
 # aFile = File.new("1.txt","w")

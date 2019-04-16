@@ -1,5 +1,5 @@
 require 'sketchup.rb'
-require 'cm_test/func_1.rb'
+require 'cm_test/func_1'
 
 module CM_Test
 
@@ -14,11 +14,8 @@ module CM_Test
     nil
   ensure
     $VERBOSE = original_verbose
-    @mod = Sketchup.active_model # Open model
-    @ent = mod.entities # All entities in model
-    @sel = mod.selection # Current selection
     SKETCHUP_CONSOLE.clear
-    puts 'reloaded!'
+    puts 'cm_test reloaded!'
   end
 
 # UI 
@@ -29,12 +26,12 @@ module CM_Test
     tool_menu.add_item("cm_test") {}
 
     # 工具栏（图标）
-    tool_bar = UI::Toolbar.new "CM_test"
+    tool_bar ||= UI::Toolbar.new('CityMaker Tools')
+
+    # Button
     btn1 = UI::Command.new("Test") { 
       func_001 
     }
-
-    # Button
     btn1.tooltip = "启动自动同步"
     btn1.small_icon = "\\images\\connect.png"
     btn1.large_icon = "\\images\\connect.png"
@@ -42,7 +39,7 @@ module CM_Test
     btn1.menu_text = "start_syn"
     tool_bar.add_item btn1
     tool_bar.show
-  
+    
     # @dialog = UI::HtmlDialog.new(
     # {
     #   :dialog_title => "Log output",

@@ -18,12 +18,17 @@ Sketchup:
 ```
 
 ## 工程目录 [参考](https://github.com/SketchUp/sketchup-ruby-api-tutorials/wiki/Development-Setup#development-setup)
+
+插件目录：
+  - windows: C:\Users\Administrator\AppData\Roaming\SketchUp\SketchUp 2017\SketchUp\Plugins
+  - mac: /Users/yourName/Library/Application Support/SketchUp 2017/SketchUp/Plugins
+
 在Sketchup程序目录plugins里创建一个名为 `!external.rb` 的文件，内容为：
 ```ruby
 # Console 可以用来查看加载错误:
 SKETCHUP_CONSOLE.show
 # 工程目录
-paths = [ '/Users/Batu/MyData/su_sdk/plugin' ]
+paths = [ '/Users/Batu/MyData/su_sdk/plugin' ]  # windows下路径中的 ‘\’ 都要替换成 ‘/’
 paths.each { |path|
   $LOAD_PATH << path
   Dir.glob("#{path}/*.{rb,rbs,rbe}") { |file|
@@ -31,6 +36,7 @@ paths.each { |path|
   }
 }
 ```
+
     - sketchup的ruby API使用的是自带的ruby标准库，如果要使用rubygems,则要用系统中安装的ruby，当然，要用的gem也都安装在这里。
     - 这些gem只适合用来辅助开发，比如rspec\byebug\...，不能作为插件的一部份，其他人的电脑里可没有ruby
     - 加载这些gem，要先把系统ruby目录指给Sketchup
@@ -80,6 +86,3 @@ module Example::HelloWorld
 
 end # module
 ```
-插件目录：
-  - windows: C:\Users\Administrator\AppData\Roaming\SketchUp\SketchUp 2017\SketchUp\Plugins
-  - mac: /Users/yourName/Library/Application Support/SketchUp 2017/SketchUp/Plugins

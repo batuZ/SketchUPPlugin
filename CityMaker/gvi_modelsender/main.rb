@@ -43,5 +43,6 @@ module GVI_Modelsender
     tool_bar.show
 
     file_loaded(__FILE__)
+    puts 'DataSender Ready'
   end
 end

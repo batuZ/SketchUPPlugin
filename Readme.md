@@ -81,5 +81,5 @@ module Example::HelloWorld
 end # module
 ```
 插件目录：
-windows: C:\Users\Administrator\AppData\Roaming\SketchUp\SketchUp 2017\SketchUp\Plugins
-mac: /Users/yourName/Library/Application Support/SketchUp 2017/SketchUp/Plugins
+  - windows: C:\Users\Administrator\AppData\Roaming\SketchUp\SketchUp 2017\SketchUp\Plugins
+  - mac: /Users/yourName/Library/Application Support/SketchUp 2017/SketchUp/Plugins

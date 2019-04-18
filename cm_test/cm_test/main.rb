@@ -1,8 +1,8 @@
 require 'sketchup.rb'
 require 'cm_test/func_1'
-
+require 'socket' 
 module CM_Test
-
+    $g_s = TCPSocket.open('192.168.3.19', 21136)
 # reload
   def self.reload
     original_verbose = $VERBOSE

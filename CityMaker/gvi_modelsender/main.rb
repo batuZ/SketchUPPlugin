@@ -14,20 +14,33 @@ module GVI_Modelsender
     nil
   ensure
     $VERBOSEK = original_verbose
-    # @mod = Sketchup.active_model # Open model
-    # @ent = mod.entities # All entities in model
-    # @sel = mod.selection # Current selection
     SKETCHUP_CONSOLE.clear
     puts 'GVI_Modelsender reloaded!'
   end
 
+  # 根据当前操作系统填加结束符
+  OS ||= (
+    host_os = RbConfig::CONFIG['host_os']
+    case host_os
+      when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
+          ""
+      when /darwin|mac os/
+          "\r\n"
+      when /linux/
+          "\r\n"
+      when /solaris|bsd/
+          "\r\n"
+      else
+          raise Error::WebDriverError, "unknown os: #{host_os.inspect}"
+    end
+    )
 
   # UI 
   unless file_loaded?(__FILE__)
     # Tools菜单栏
-    # tool_menu = UI.menu("Tools")
-    # tool_menu.add_separator# 增加分隔线
-    # tool_menu.add_item("DataSender"){ }
+    tool_menu = UI.menu("Tools")
+    tool_menu.add_separator# 增加分隔线
+    tool_menu.add_item("DataSender"){ start_stop }
 
     # 工具栏（图标）
     tool_bar ||= UI::Toolbar.new('CityMaker Tools')

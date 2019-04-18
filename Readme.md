@@ -86,3 +86,21 @@ module Example::HelloWorld
 
 end # module
 ```
+
+## 其它
+
+微型测试服务器 `ruby testServer.rb`
+```ruby
+# in testServer.rb
+require 'socket' 
+
+server = TCPServer.open(21136)
+puts 'test server start up!! -- Ctrl + c to stop'
+loop {
+  Thread.start(server.accept) do |client|
+    puts client.gets
+    # client.puts "回复"  
+    client.close
+  end
+}
+```

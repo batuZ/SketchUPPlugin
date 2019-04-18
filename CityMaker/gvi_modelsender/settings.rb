@@ -7,7 +7,7 @@ module GVI_Modelsender
   $appObs = GVIAppObserver.new()
   # $viewObs = GVIViewObserver.new()
   $entObs = nil
-
+  $offset = []
   def self.start_stop
     if $entObs.nil?
     	showDialog
@@ -35,8 +35,9 @@ module GVI_Modelsender
 					file.puts inputs[0]
 					file.puts "#{inputs[1]},#{inputs[2]},#{inputs[3]}"
 				end
-
-				TCPSocket.open(inputs[0].strip, $port).puts '123321' + OS
+				
+				$offset = Geom::Point3d.new(inputs[1].to_f,inputs[2].to_f,inputs[3].to_f)
+				TCPSocket.open(inputs[0].strip, $port).puts "#{Sketchup.active_model.guid}:#{$offset.to_a}" + OS
 	
 				$ip = inputs[0].strip
 
@@ -68,5 +69,9 @@ module GVI_Modelsender
 			closeConnect
 		end
 	end
-
+# @mod = Sketchup.active_model 
+# @ent = mod.entities 
+# @sel = mod.selection 
+# GVI_Modelsender.reload
+# SKETCHUP_CONSOLE.clear
 end

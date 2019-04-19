@@ -27,7 +27,7 @@ module GVI_Modelsender
 			arr = IO.readlines(config_file_name)
 			vec = arr[1].split(',')
 			prompts = ["Connect主机IP：","偏移量 X：","偏移量 Y：","偏移量 Z："]
-			defaults = [arr[0], vec[0].to_f, vec[1].to_f, vec[2].to_f ]
+			defaults = [arr[0].strip, vec[0].to_f, vec[1].to_f, vec[2].to_f ]
 			inputs = UI.inputbox(prompts, defaults, "设置")
 
 			if inputs

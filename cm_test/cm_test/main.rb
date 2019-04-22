@@ -40,24 +40,24 @@ module CM_Test
     tool_bar.add_item btn1
     tool_bar.show
     
-    # @dialog = UI::HtmlDialog.new(
-    # {
-    #   :dialog_title => "Log output",
-    #   :preferences_key => "CM_Test",
-    #   :scrollable => true,
-    #   :resizable => true,
-    #   :width => 600,
-    #   :height => 100,
-    #   :left => 100,
-    #   :top => 100,
-    #   :min_width => 50,
-    #   :min_height => 50,
-    #   :max_width =>1000,
-    #   :max_height => 1000,
-    #   :style => UI::HtmlDialog::STYLE_UTILITY
-    # })
-    # @dialog.bring_to_front
-    # @dialog.show
+    @dialog = UI::HtmlDialog.new(
+    {
+      :dialog_title => "Log output",
+      :preferences_key => "CM_Test",
+      :scrollable => true,
+      :resizable => true,
+      :width => 600,
+      :height => 100,
+      :left => 100,
+      :top => 100,
+      :min_width => 50,
+      :min_height => 50,
+      :max_width =>1000,
+      :max_height => 1000,
+      :style => UI::HtmlDialog::STYLE_UTILITY
+    })
+    @dialog.bring_to_front
+    @dialog.show
 
     file_loaded(__FILE__)
   end

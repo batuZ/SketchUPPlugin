@@ -2,17 +2,25 @@ require 'socket'
 require 'gvi_modelsender/observers'
 
 module GVI_Modelsender
-	$ip = nil
-	$port = 21136
-  $appObs = GVIAppObserver.new()
-  # $viewObs = GVIViewObserver.new()
-  $entObs = nil
-  $offset = []
+	$ip 						= nil
+	$port 					= 21136
+  $offset 				= []
+  $isConnected 		= false
+
+  Sketchup.add_observer(GVIAppObserver.new) 		
+  $modelObs 			= GVIModelObserver.new
+  # $definitionsObs	= GVIDefinitionsObserver.new
+  # $entitiesObs 		= GVIEntitiesObserver.new
+  # $materialsObs 	= GVIMaterialsObserver.new
+  # $layersObs 			= GVILayersObserver.new
+  # $viewObs 				= GVIViewObserver.new
+  $selectionObs		= GVISelectionObserver.new
+
   def self.start_stop
-    if $entObs.nil?
-    	showDialog
+    if $isConnected
+    	closeConnect if UI.messagebox("[#{Sketchup.active_model.title}] 已经连联服务器，是否断开联接？", MB_YESNO) ==  IDYES
     else
-    	closeConnect if UI.messagebox("已经连接服务器，是否断开联接？", MB_YESNO) ==  IDYES
+    	showDialog
     end
   end
 
@@ -35,41 +43,52 @@ module GVI_Modelsender
 					file.puts inputs[0]
 					file.puts "#{inputs[1]},#{inputs[2]},#{inputs[3]}"
 				end
-				
+
 				$offset = Geom::Point3d.new(inputs[1].to_f,inputs[2].to_f,inputs[3].to_f)
 				TCPSocket.open(inputs[0].strip, $port).puts "#{Sketchup.active_model.guid}:#{$offset.to_a}" + OS
-	
 				$ip = inputs[0].strip
-
-				$entObs = GVIEntitiesObserver.new()
-        Sketchup.active_model.entities.add_observer($entObs)
-				Sketchup.add_observer($appObs) if $appObs
-		  	Sketchup.active_model.active_view.add_observer($viewObs) if $viewObs
+				
+				Sketchup.active_model.add_observer($modelObs) 									if $modelObs
+				Sketchup.active_model.definitions.add_observer($definitionsObs) if $definitionsObs
+        Sketchup.active_model.entities.add_observer($entitiesObs) 			if $entitiesObs
+        Sketchup.active_model.materials.add_observer($materialsObs) 		if $materialsObs
+        Sketchup.active_model.layers.add_observer($layersObs) 					if $layersObs
+		  	Sketchup.active_model.active_view.add_observer($viewObs) 				if $viewObs
+		  	Sketchup.active_model.selection.add_observer($selectionObs)			if $selectionObs
+				$isConnected = true
 
 		  	UI.messagebox("连接IP: #{inputs[0].strip} 成功")
     	end
   	rescue Exception => e
-      UI.messagebox("连接主机IP失败，或输入坐标错误，请重试")
+      UI.messagebox("连接主机IP失败，或输入坐标错误，请重试 #{e}")
       showDialog
     end
 	end
 
 	def self.closeConnect
-		Sketchup.remove_observer($appObs) if $appObs
-  	Sketchup.active_model.active_view.remove_observer($viewObs) if $viewObs
-		Sketchup.active_model.entities.remove_observer($entObs) if $viewObs
-  	$entObs = nil
-  	UI.messagebox("Connect 已断开，自动同步停止!")
+		if $isConnected
+			Sketchup.active_model.remove_observer($modelObs) 										if $modelObs
+			Sketchup.active_model.definitions.remove_observer($definitionsObs) 	if $definitionsObs
+	    Sketchup.active_model.entities.remove_observer($entitiesObs) 				if $entitiesObs
+	    Sketchup.active_model.materials.remove_observer($materialsObs) 			if $materialsObs
+	    Sketchup.active_model.layers.remove_observer($layersObs) 						if $layersObs
+	  	Sketchup.active_model.active_view.remove_observer($viewObs) 				if $viewObs
+			Sketchup.active_model.selection.remove_observer($selectionObs)			if $selectionObs
+	 		$isConnected = false
+
+	  	UI.messagebox("[#{Sketchup.active_model.title}] 已断开，自动同步停止!")
+	  end
   end
 
 	def self.sendMessage(message)
 		begin
-			TCPSocket.open($ip, $port).puts message+OS if not $entObs.nil?
-		rescue
+			TCPSocket.open($ip, $port).puts message+OS if $isConnected
+		rescue Exception => e
 			closeConnect
+			UI.messagebox("error: #{e}")
 		end
 	end
-# @mod = Sketchup.active_model 
+# @mod = Sketchup.active_model.find_entity_by_persistent_id
 # @ent = mod.entities 
 # @sel = mod.selection 
 # GVI_Modelsender.reload

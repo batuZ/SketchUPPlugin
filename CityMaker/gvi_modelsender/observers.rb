@@ -9,30 +9,6 @@ module GVI_Modelsender
 		pp obj2 if obj2
 	end
 
-	# windows一个app里只有一个model，so,windows里new or open model时，
-	# 必须停止连接才能进行再连接，把新的guid\offset发给server
-	# mac里一个app可以有多个models通过激活进行切换,
-
-	class GVIAppObserver < Sketchup::AppObserver
-		def onNewModel(model)
-			GVI_Modelsender.logger model
-			GVI_Modelsender.closeConnect if OS.empty? # empty is windows os
-		end
-
-		def onOpenModel(model)
-			GVI_Modelsender.logger model
-			GVI_Modelsender.closeConnect if OS.empty?
-		end
-
-		def onActivateModel(model)
-		end
-
-		def onQuit()
-			GVI_Modelsender.logger 'onQuit'
-			GVI_Modelsender.closeConnect
-		end
-	end
-
 	class GVIModelObserver < Sketchup::ModelObserver
 	  def onPlaceComponent(instance)
 	   	GVI_Modelsender.logger instance
@@ -146,11 +122,7 @@ module GVI_Modelsender
 	  def onSelectionAdded(selection, entity)
 		  # GVI_Modelsender.logger entity
 		end
-		# def ttt par
-		# 	p par.guid
-		# 	p s = Sketchup.active_model.find_entity_by_id(par.guid)
-		# 	p s.persistent_id
-		# end
+
 		def onSelectionBulkChange(selection)
 		  log = selection.map do |s| 
 		  	if s.typename.eql?'Group' or s.typename.eql?'ComponentInstance'
@@ -165,4 +137,17 @@ module GVI_Modelsender
 		end
 	end
 
+
+
+	class GVIAppObserver < Sketchup::AppObserver
+		def onNewModel(model)
+			GVI_Modelsender.logger model
+			model.attribute_dictionary($opt,true)[$isCon] = false
+		end
+
+		def onOpenModel(model)
+			GVI_Modelsender.logger model
+			model.attribute_dictionary($opt,true)[$isCon] = false
+		end
+	end
 end

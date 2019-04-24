@@ -38,3 +38,7 @@ header + report + data
 1 - 创建、增加
 2 - 编辑、修改
 3 - 删除
+
+Sketchup.active_model.definitions
+
+

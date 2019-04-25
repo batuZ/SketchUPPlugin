@@ -11,7 +11,7 @@ module GVI_Modelsender
 
   Sketchup.add_observer(GVIAppObserver.new)
   # $modelObs 			= GVIModelObserver.new
-  $definitionsObs	= GVIDefinitionsObserver.new
+  # $definitionsObs	= GVIDefinitionsObserver.new
   $entitiesObs 		= GVIEntitiesObserver.new
   # $materialsObs 	= GVIMaterialsObserver.new
   # $layersObs 			= GVILayersObserver.new
@@ -81,14 +81,9 @@ module GVI_Modelsender
  		Sketchup.active_model.attribute_dictionary('GVI_Modelsender_options',true)['isConnected'] = false
   end
 
-	def self.sendMessage(message)
-		begin
-			TCPSocket.open($ip, $port).puts message+OS if Sketchup.active_model.attribute_dictionary($opt)[$isCon]
-		rescue Exception => e
-			closeConnect
-			UI.messagebox("error: #{e}")
-		end
-	end
+
+
+
 # @mod = Sketchup.active_model.find_entity_by_persistent_id
 # @ent = mod.entities 
 # @sel = mod.selection 

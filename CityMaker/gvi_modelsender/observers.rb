@@ -1,42 +1,42 @@
 require 'socket' 
 require 'pp'
+require 'gvi_modelsender/helpers'
 
 module GVI_Modelsender
 	
-	def self.logger obj1
-		pp caller[0].split(':').last + '-->'
-		pp obj1
+	def self.logger objs, obj=nil
+
 	end
 
 #-------- Model ----------------------------
 # Sketchup.active_model
 
 	class GVIModelObserver < Sketchup::ModelObserver
-	  def onPlaceComponent(instance)
-	   	GVI_Modelsender.logger instance
-	  end
 
-		# 当用户双击组件编辑时，显示他们遵循的模型层次结构中的“路径”。
-		def onActivePathChanged(model)
-			GVI_Modelsender.logger model
-		end
+		# def onActivePathChanged(model)
+		# 	#当用户打开用于编辑位置的实例时，打开的实例中的实体的变换将相对于全局世界坐标而不是相对于其父节点的本地坐标。
+		# end
 
-		def onDeleteModel(model)
-			GVI_Modelsender.logger model
-		end
+	 #  def onPlaceComponent(instance)
+	 #   	GVI_Modelsender.logger instance
+	 #  end
 
-		# 当在模型中的任何被删除方法被调用
-		def onEraseAll(model)
-			GVI_Modelsender.logger model
-		end
+		# def onDeleteModel(model)
+		# 	GVI_Modelsender.logger model
+		# end
 
-		def onExplode(model)
-			GVI_Modelsender.logger model
-		end
+		# # 当在模型中的任何被删除方法被调用
+		# def onEraseAll(model)
+		# 	GVI_Modelsender.logger model
+		# end
 
-		def onTransactionCommit(model)
-			GVI_Modelsender.logger model
-		end
+		# def onExplode(model)
+		# 	GVI_Modelsender.logger model
+		# end
+
+		# def onTransactionCommit(model)
+		# 	GVI_Modelsender.logger model
+		# end
 	end
 
 #-------- Definition ----------------------------
@@ -71,17 +71,6 @@ module GVI_Modelsender
 		end
 	end
 
-#-------- Entity ----------------------------
-# Sketchup.active_model.entities[0]
-
-	class MyEntityObserver < Sketchup::EntityObserver
-		def onChangeEntity(entity)
-		  puts "onChangeEntity: #{entity}"
-		end
-	  def onEraseEntity(entity)
-	    puts "onEraseEntity: #{entity}"
-	  end
-	end
 
 #-------- Entities ----------------------------
 # Sketchup.active_model.entities
@@ -89,24 +78,15 @@ module GVI_Modelsender
 	class GVIEntitiesObserver < Sketchup::EntitiesObserver
 
 		def onElementAdded(entities, entity)
-			entity.add_observer(MyEntityObserver.new)
-			GVI_Modelsender.logger  entity if not entity.typename.eql? 'Edge'
+			puts "Add[#{entity.typename}:#{entity.entityID}] in [#{entities.count}]" if not entity.typename.eql? 'Edge'
 		end
 
 		def onElementModified(entities, entity)
-			GVI_Modelsender.logger entity if not entity.typename.eql? 'Edge'
-			# if(entity.is_a? Sketchup::AttributeDictionary)
-			# 	log = entity.map{|k,v| "#{k}:#{v} <br>" }
-			# 	$webdialog.set_html(log.to_s)
-			# end
+			puts "Edit[#{entity.typename}:#{entity.entityID}] in [#{entities.count}]" if not entity.typename.eql? 'Edge'
 		end
 
 		def onElementRemoved(entities, entity_id)
-			GVI_Modelsender.logger  entity_id
-		end
-
-		def onEraseEntities(entities)
-		  GVI_Modelsender.logger entities
+			puts "Delete[#{entity_id}] in [#{entities.count}]"
 		end
 	end
 
@@ -166,24 +146,25 @@ module GVI_Modelsender
 
 	class GVISelectionObserver < Sketchup::SelectionObserver
 	  def onSelectionAdded(selection, entity)
-		  GVI_Modelsender.logger entity
+		  # GVI_Modelsender.logger entity
 		end
 
 		def onSelectionBulkChange(selection)
+			papa = GVI_Modelsender.parent_object
 			log = ''
 			selection.each do |s|
 				log += "<div>
 				<p>self: #{s.typename}</p>
 				<p>self_entityID: #{s.entityID}</p>
-				<p>self_persistent_id: #{s.persistent_id}</p>
 				<p>self_def_entID: #{(s.typename.eql?'Face' or s.typename.eql?'Edge') ? 'no definition' : s.definition.entityID} </p>
-				<p>parent: #{s.parent.typename}</p> 
-				<p>parent_entityID: #{(s.parent.typename.eql?'Model') ? s.parent.guid : s.parent.instances.first.entityID}</p>
-				<p>parent_persistent_id: #{(s.parent.typename.eql?'Model') ? s.parent.guid : s.parent.instances.first.persistent_id}
-				<p>parent_def_entID: #{s.parent.entityID}</p>
+				<p>parent: #{papa ? papa.typename : 'Model'}</p> 
+				<p>parent_entityID: #{ papa ? papa.entityID : Sketchup.active_model.guid}</p>
+				<p>parent_def_entID: #{papa ? papa.definition.entityID : Sketchup.active_model.guid}</p>
+
 				</div>"
 			end
 		  $webdialog.set_html(log.to_s)
+		  # puts Report.new(Sketchup.active_model,selection.first).to_report
 		end
 
 		def onSelectionCleared(selection)

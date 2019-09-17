@@ -29,7 +29,23 @@ ffmpeg -f gdigrab -i desktop -f dshow -i audio="virtual-audio-capturer" -vcodec 
 --------------------- 
 区域录像 ( 起点:100,60 width:600 width:480 )
 ffmpeg -f gdigrab -i desktop -f dshow -i audio="virtual-audio-capturer" -vcodec libx264 -acodec libmp3lame -video_size 600x480 -offset_x 100 -offset_y 60 -r 15 e:/temp/temp.mkv
+
+ffmpeg -y -f gdigrab  -video_size 600x400 -offset_x 300	-offset_y 500 -i desktop out.mkv
 --------------------- 
 
 
 https://blog.csdn.net/leixiaohua1020/article/details/38284961
+
+
+
+
+
+
+on mac
+https://www.jianshu.com/p/b4f9f8c5e86a
+ffmpeg -f avfoundation -list_devices true -i ""
+ffmpeg -f avfoundation -i 1 -r 30 -c copy /Users/Batu/Desktop/test.mp4
+ffplay 
+
+
+
